@@ -1,0 +1,163 @@
+Job Summary
+The SolidFire Office of the CTO (SFOCTO) promotes SolidFire solutions within the NetApp
+Data Fabric as a team of socially active subject matter experts in modern and nextgeneration data center infrastructure, especially software. Team members are recognized
+industry experts in cutting-edge software stacks which support Mobile, IoT, Social,
+Gamification, Artificial Intelligence, Machine/Deep Learning or similar applications. Related
+disciplines in DevOps, continuous delivery, security, networking or data science are strongly
+preferred. Our goal is to deliver world-class influence marketing outcomes (such as
+strongly positive online sentiment and deeper sales pipelines) by engaging with targeted
+technical communities (Security, Networking, VMware, IoT, Open Source, NoSQL, Big
+Data, AI, etc…) and demonstrating thought leadership. As a SFOCTO team member, you
+would be responsible for proactive promotion of our technology, solutions and success
+stories around the world, online and in person.
+Do you eat, breathe, and sleep infrastructure automation, microservices via containers,
+orchestration at scale, or continuous integration & delivery in support of the use-cases
+above? Do you want to position the industry’s pioneering on-prem fully elastic storage-asa-service solution for these projects? If so, you will contribute to SolidFire via the SFOCTO
+having a greater voice in key trends that shape markets and positively affect their
+ecosystems. SFOCTO team members are active participants in the public discourse about
+how NetApp / SolidFire offerings integrate with next-generation applications and services.
+Target customers will be Digitally Transforming Enterprises and their Service Providers
+which build and operate these new applications in support of their strategic initiatives.
+The SFOCTO is fiercely committed to diversity and will be a high-profile role model as such.
+
+1	of	3	
+
+Job Requirements
+•
+
+Identify technical innovation throughout the NetApp / SolidFire ecosystem of
+employees, customers and partners.
+
+•
+
+Actively promote the above around the world, online and in person.
+
+•
+
+Based on your experience, exert a direct influence on the technology vision of
+SolidFire.
+
+•
+
+Beat the drum daily to drive SolidFire value-add awareness.
+
+•
+
+Deliver engaging technical presentations about SolidFire and integrated ecosystems
+that excite developers, architects, customers, partners and technologists to explore
+and consume SolidFire-based services.
+
+•
+
+Funnel feedback to our product leaders in order to drive timely and material levels of
+change as technology trends and related consumption models evolve.
+
+•
+
+Serve as a public “face of SolidFire” - represent the company as an invited keynoter /
+speaker / panelist at technology events.
+
+•
+
+Deliver live broadcasts (Facebook, Periscope, etc…) webinars, podcasts and online
+sessions demonstrating SolidFire and related technology integration.
+
+•
+
+Collaborate with other evangelists throughout NetApp (Flash, Hyperscale Group,
+OnCommand, etc…) to cross-promote our solutions throughout the Data Center
+Infrastructure industry.
+
+•
+
+Build programs to grow our community, planning and participating in webcasts,
+hackathons, developer events and other technical outreach activities.
+
+•
+
+Generate informative and persuasive technical content for a variety of channels
+including NetApp and Channel sales teams, social media, blogs, podcasts,
+webinars, community, and industry relevant events.
+
+•
+
+Contribute to making our documentation a great developer experience
+
+•
+
+Lead the creation of demos and examples of how our 3 platform solutions solve real
+world problems.
+
+•
+
+Network and seek opportunities to increase HSG’s visibility particularly within the 3
+Platform solutions such as NoSQL, Analytics, Hadoop, Hbase, Spark and RDBMS
+communities.
+
+rd
+
+rd
+
+2	of	3	
+
+Education and Experience
+•
+
+5+ years in technical evangelism or technical presales with excellent English writing
+skills, presentation and media skills.
+
+•
+
+Significant experience expressing complex concepts and opinions in blog posts and
+other written materials
+
+•
+
+Strong technical and people skills
+
+•
+
+Contagious enthusiasm sharing your knowledge and ideas with others by building
+and contributing to communities and thought leadership dialogues.
+
+•
+
+Expertise in one or more of: Mobile, IoT, Social, Gamification, Artificial Intelligence,
+Machine/Deep Learning
+
+•
+
+Hands-on experience with in 3rd Platform solutions such as Analytics, NoSQL,
+Hadoop or Spark with a strong interest in becoming an expert in the others.
+
+•
+
+Deep intuition on how to read and engage the developer community.
+
+•
+
+Creative, imaginative thinker for identifying new and effective ways to excite
+developers looking to manage the volume and velocity of their data.
+
+•
+
+Good understanding of contemporary SW development practices.
+
+•
+
+Flexibility to travel 50-66% for conferences, meetups, strategic customer & partner
+meetings.
+
+•
+
+Self-starter. Able to learn quickly, prioritize effectively and deliver results in a fastpaced, environment.
+
+•
+
+Bachelor's degree preferred in Computer Science or related major.
+
+	
+
+3	of	3	
+
+
