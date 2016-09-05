@@ -6,14 +6,23 @@
 #We need to take the latest and greatest as default
 #We will remove things first
 
+#Tameika Added the following seems to work better now
+#
+systemctl stop logstash
+systemctl stop elasticsearch
+service stop kibana
+systemctl disable logstash
+systemctl disable elasticsearch
+systemctl disable kibana
+
+
 yum remove kibana elasticsearch jre1.8.* -y
-
-
 
 elasticrepo="/etc/yum.repos.d/elasticsearch.repo"
 kibanarepo="/etc/yum.repos.d/kibana.repo"
-
+ip=127.0.0.1
 #We downloaded the rpm
+
 
 echo "Installing the java rpm"
 rpm -Uvh /opt/jre-8u101-x64.rpm
@@ -38,6 +47,7 @@ echo "$itsjava\n"
 ##########################################
 
 #Setup elasticsearch repo
+
 
 echo "Setting up repo"
 
@@ -72,19 +82,15 @@ sed -i '/network.host/c\network.host: localhost' /etc/elasticsearch/elasticsearc
 #We will now enable and start this service
 
 echo "We are enabled and starting elastic"
-systemctl enable elasticsearch && systemctl start elasticsearch
+systemctl daemon-reload
+systemctl enable elasticsearch 
+systemctl start elasticsearch
+#service elasticsearch start
+#chkconfig elasticsearch on
 
 #Created by Ayotunde
 #Create and edit a new yum repository file for Kibana.
 #Also add the repository configuration to the file.
-
-#Import the Elasticsearch public GPG key into RPM.
-
-echo "Importing the key for elasticsearch"
-
-rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
-
-
 ############
 echo '[kibana-4.6]' >> $kibanarepo
 echo "name=Kibana repository for 4.6.x packages" >> $kibanarepo
@@ -109,7 +115,7 @@ yum -y install kibana
 #vi /opt/kibana/config/kibana.yml
 #Replace the IP address on the server.host line in the Kibana config file
 
-sed -i '/server.host/c\server.host: localhost' /opt/kibana/config/kibana.yml
+sed -i '/server.host/c\server.host: "localhost"' /opt/kibana/config/kibana.yml
 
 #############
 sleep 10 
@@ -118,10 +124,89 @@ sleep 10
 
 echo "Starting and enabling Kibana Service"
 
-systemctl start kibana 
-
+#systemctl start kibana.service 
+service kibana start
 
 #Enable the Kibana service
 
-systemctl enable kibana
+systemctl enable kibana.service
+#chkconfig kibana on
+##!/usr/bin/env bash
+#
+#if [[ ${EUID} -ne 0 ]]; then
+#  echo "Please run this script as root or with sudo. Exiting." >&2
+#  exit 1
+#fi
+#
+#if [[ $# -ne 1 ]]; then
+#  echo "Usage: $0 <ip_address>" >&2
+#  exit 1
+#else
+#  ip=$1
+#fi
+#
+#
+cat <<EOF > /etc/yum.repos.d/logstash.repo
+[logstash-2.2]
+name=logstash repository for 2.2 packages
+baseurl=http://packages.elasticsearch.org/logstash/2.2/centos
+gpgcheck=1
+gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+enabled=1
+EOF
+
+yum install -y logstash
+
+cat <<EOF > /etc/logstash/conf.d/02-beats-input.conf
+input {
+  beats {
+    port => 5044
+    ssl => true
+    ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
+    ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
+  }
+}
+EOF
+
+cat <<EOF > /etc/logstash/conf.d/10-syslog-filter.conf
+filter {
+  if [type] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+    add_field => [ "received_at", "%{@timestamp}" ]
+    add_field => [ "received_from", "%{host}" ]
+    }
+    syslog_pri { }
+    date {
+      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+    }
+  }
+}
+EOF
+
+cat <<EOF > /etc/logstash/conf.d/30-elasticsearch-output.conf
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    sniffing => true
+    manage_template => false
+    index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+    document_type => "%{[@metadata][type]}"
+  }
+}
+EOF
+
+cd /etc/pki/tls
+
+if ! grep -q "subjectAltName = IP: ${ip}" /etc/pki/tls/openssl.cnf; then
+  sed -i "/^\[ v3_ca \]/a subjectAltName = IP: ${ip}" /etc/pki/tls/openssl.cnf
+fi
+
+sudo openssl req -config /etc/pki/tls/openssl.cnf \
+     -x509 -days 3650 -batch -nodes -newkey rsa:2048 \
+     -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+
+service logstash configtest \
+ && systemctl restart logstash \
+ && sudo chkconfig logstash on
 
