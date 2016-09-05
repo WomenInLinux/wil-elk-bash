@@ -6,13 +6,20 @@
 #We need to take the latest and greatest as default
 #We will remove things first
 
+
+systemctl stop logstash
+systemctl stop elasticsearch
+service stop kibana
+systemctl disable logstash
+systemctl disable elasticsearch
+systemctl disable kibana
+
+
 yum remove kibana elasticsearch jre1.8.* -y
-
-
 
 elasticrepo="/etc/yum.repos.d/elasticsearch.repo"
 kibanarepo="/etc/yum.repos.d/kibana.repo"
-
+ip=127.0.0.1
 #We downloaded the rpm
 
 
@@ -116,9 +123,8 @@ sleep 10
 
 echo "Starting and enabling Kibana Service"
 
-systemctl start kibana.service 
-#service kibana start
-
+#systemctl start kibana.service 
+service kibana start
 
 #Enable the Kibana service
 
@@ -139,67 +145,67 @@ systemctl enable kibana.service
 #fi
 #
 #
-#cat <<EOF > /etc/yum.repos.d/logstash.repo
-#[logstash-2.2]
-#name=logstash repository for 2.2 packages
-#baseurl=http://packages.elasticsearch.org/logstash/2.2/centos
-#gpgcheck=1
-#gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
-#enabled=1
-#EOF
-#
-#yum install -y logstash
-#
-#cat <<EOF > /etc/logstash/conf.d/02-beats-input.conf
-#input {
-#  beats {
-#    port => 5044
-#    ssl => true
-#    ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
-#    ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
-#  }
-#}
-#EOF
-#
-#cat <<EOF > /etc/logstash/conf.d/10-syslog-filter.conf
-#filter {
-#  if [type] == "syslog" {
-#    grok {
-#      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
-#    add_field => [ "received_at", "%{@timestamp}" ]
-#    add_field => [ "received_from", "%{host}" ]
-#    }
-#    syslog_pri { }
-#    date {
-#      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
-#    }
-#  }
-#}
-#EOF
-#
-#cat <<EOF > /etc/logstash/conf.d/30-elasticsearch-output.conf
-#output {
-#  elasticsearch {
-#    hosts => ["localhost:9200"]
-#    sniffing => true
-#    manage_template => false
-#    index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
-#    document_type => "%{[@metadata][type]}"
-#  }
-#}
-#EOF
-#
-#cd /etc/pki/tls
-#
-#if ! grep -q "subjectAltName = IP: ${ip}" /etc/pki/tls/openssl.cnf; then
-#  sed -i "/^\[ v3_ca \]/a subjectAltName = IP: ${ip}" /etc/pki/tls/openssl.cnf
-#fi
-#
-#sudo openssl req -config /etc/pki/tls/openssl.cnf \
-#     -x509 -days 3650 -batch -nodes -newkey rsa:2048 \
-#     -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
-#
-#service logstash configtest \
-# && systemctl restart logstash \
-# && sudo chkconfig logstash on
-#
+cat <<EOF > /etc/yum.repos.d/logstash.repo
+[logstash-2.2]
+name=logstash repository for 2.2 packages
+baseurl=http://packages.elasticsearch.org/logstash/2.2/centos
+gpgcheck=1
+gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+enabled=1
+EOF
+
+yum install -y logstash
+
+cat <<EOF > /etc/logstash/conf.d/02-beats-input.conf
+input {
+  beats {
+    port => 5044
+    ssl => true
+    ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
+    ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
+  }
+}
+EOF
+
+cat <<EOF > /etc/logstash/conf.d/10-syslog-filter.conf
+filter {
+  if [type] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+    add_field => [ "received_at", "%{@timestamp}" ]
+    add_field => [ "received_from", "%{host}" ]
+    }
+    syslog_pri { }
+    date {
+      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+    }
+  }
+}
+EOF
+
+cat <<EOF > /etc/logstash/conf.d/30-elasticsearch-output.conf
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    sniffing => true
+    manage_template => false
+    index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+    document_type => "%{[@metadata][type]}"
+  }
+}
+EOF
+
+cd /etc/pki/tls
+
+if ! grep -q "subjectAltName = IP: ${ip}" /etc/pki/tls/openssl.cnf; then
+  sed -i "/^\[ v3_ca \]/a subjectAltName = IP: ${ip}" /etc/pki/tls/openssl.cnf
+fi
+
+sudo openssl req -config /etc/pki/tls/openssl.cnf \
+     -x509 -days 3650 -batch -nodes -newkey rsa:2048 \
+     -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+
+service logstash configtest \
+ && systemctl restart logstash \
+ && sudo chkconfig logstash on
+
