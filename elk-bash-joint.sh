@@ -7,7 +7,7 @@
 #We will remove things first
 
 #Tameika Added the following seems to work better now
-
+#
 systemctl stop logstash
 systemctl stop elasticsearch
 service stop kibana
