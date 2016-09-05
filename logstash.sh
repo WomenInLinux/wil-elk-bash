@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#testing the tee command
 
 echo 'filter {
   if [type] == "syslog" {
