@@ -3,7 +3,7 @@
 #testing the tee command
 #adding to github
 #
-
+#
 echo 'filter {
   if [type] == "syslog" {
     grok {
