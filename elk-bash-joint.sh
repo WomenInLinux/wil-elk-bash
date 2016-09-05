@@ -6,6 +6,7 @@
 #We need to take the latest and greatest as default
 #We will remove things first
 
+#Tameika Added the following seems to work better now
 
 systemctl stop logstash
 systemctl stop elasticsearch
