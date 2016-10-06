@@ -20,7 +20,7 @@ yum remove kibana elasticsearch jre1.8.* -y
 
 elasticrepo="/etc/yum.repos.d/elasticsearch.repo"
 kibanarepo="/etc/yum.repos.d/kibana.repo"
-ip=127.0.0.1
+ip=104.196.195.27
 #We downloaded the rpm
 
 
@@ -77,7 +77,7 @@ esearch=`rpm -qa | grep elastic`
 
 echo -n "$esearch"
 
-sed -i '/network.host/c\network.host: localhost' /etc/elasticsearch/elasticsearch.yml
+sed -i '/network.host/c\network.host: 104.196.195.27' /etc/elasticsearch/elasticsearch.yml
 
 #We will now enable and start this service
 
@@ -115,7 +115,7 @@ yum -y install kibana
 #vi /opt/kibana/config/kibana.yml
 #Replace the IP address on the server.host line in the Kibana config file
 
-sed -i '/server.host/c\server.host: "localhost"' /opt/kibana/config/kibana.yml
+sed -i '/server.host/c\server.host: "104.196.195.27"' /opt/kibana/config/kibana.yml
 
 #############
 sleep 10 
@@ -187,7 +187,7 @@ EOF
 cat <<EOF > /etc/logstash/conf.d/30-elasticsearch-output.conf
 output {
   elasticsearch {
-    hosts => ["localhost:9200"]
+    hosts => ["104.196.195.27:9200"]
     sniffing => true
     manage_template => false
     index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
@@ -209,4 +209,43 @@ sudo openssl req -config /etc/pki/tls/openssl.cnf \
 service logstash configtest \
  && systemctl restart logstash \
  && sudo chkconfig logstash on
+###########################################################
+echo "We are setting ourselves for a yum install of the epel"
 
+yum -y install epel-release
+
+echo "Installing httpd tools"
+
+yum -y install nginx httpd-tools
+
+
+echo passwd | htpasswd -c /etc/nginx/htpasswd.users kibanaadmin 
+
+cat <<EOF> /etc/nginx/conf.d/kibana.conf server {
+     listen 80;
+
+    server_name example.com;
+
+    auth_basic "Restricted Access";
+    auth_basic_user_file /etc/nginx/htpasswd.users;
+
+    location / {
+        proxy_pass http://104.196.195.27:5601;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;        
+    }
+}
+
+EOF
+
+echo "We are starting and enable nginx"
+echo "We will also ensure httpd is stopped because port conflict"
+
+systemctl stop httpd
+systemctl disable httpd
+systemctl start nginx
+systemctl enable nginx
+setsebool -P httpd_can_network_connect 1
